@@ -1,21 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { Book } from './book.dto';
 
 @Injectable()
 export class BookService {
 
-    addBook():string{
-        return "Add Your book here";
+    public books : Book[] = []
+
+    addBook(book : Book){
+        this.books.push(book);
+        return "book is added";
     }
 
-    findAllBook():string{
+    findAllBook(){
+        return this.books;
         return "your all book";
     }
 
-    updateBook():string{
+    updateBook(book:Book){
+        let index = this.books.findIndex((cbook) => {
+            return cbook.id == book.id;
+        })
+        this.books[index] = book;
         return "book is updated";
     }
 
-    deleteBook():string{
+    deleteBook(bookId : string){
+        this.books = this.books.filter((cbook) => {
+            return bookId != cbook.id
+        })
         return "your book is deleted";
     }
 
