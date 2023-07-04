@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './book.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Books')
 @Controller('book')
 export class BookController {
 
