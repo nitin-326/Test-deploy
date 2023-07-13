@@ -1,41 +1,47 @@
 import { Body, Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from './user.entity';
-import { LoginDto } from './user.dto';
+import { UserDto } from './dto/user.dto';
 import { AuthService } from 'src/Auth/auth.service';
-
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from './entity/user.entity';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
- 
-    constructor(private authService: AuthService){}
+  constructor(
+    private authService: AuthService,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+  ) {}
 
-    public users : User[] = [{
-        id: '1',
-        username: 'Nitin',
-        email: 'nitin@gmail.com',
-        password:'hi@nitin'
-    }];
+  async signup(userDto: UserDto) {
+    const username = userDto.username;
+    const password = userDto.password;
+    const hashpassword = await bcrypt.hash(password, 12);
 
-    // signup(){
-    //     return "User sign up";
-    // }
+    const myDto = new UserDto();
+    myDto.username = username;
+    myDto.password = hashpassword;
 
-    login(loginDto:LoginDto){
+    return this.userRepository.save(myDto);
+  }
 
-        const myUSer = this.users.find(user => user.username === loginDto.username);
+  async login(userDto: UserDto) {
+    const user = await this.userRepository.findOneBy({
+      username: userDto.username,
+    });
 
-        if(!myUSer){
-             throw new UnauthorizedException()
-        }
-
-        if(myUSer.password == loginDto.password){
-            const token = this.authService.generateToken(loginDto);
-            // console.log(token)
-            return token;
-        }
-
-        throw new UnauthorizedException();
-
+    if (!user) {
+      throw new UnauthorizedException("user is not registered");
     }
+
+    const isMatch = bcrypt.compare(userDto.password,user.password);
+
+    if (isMatch) {
+      const token = this.authService.generateToken(userDto);
+      return token;
+    }
+
+    throw new UnauthorizedException("Incorrect Login Details");
+  }
 }

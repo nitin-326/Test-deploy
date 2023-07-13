@@ -1,13 +1,13 @@
-import { IsString, MaxLength, MinLength, IsNotEmpty } from "class-validator";
+import { IsString, MaxLength, MinLength, IsNotEmpty, IsNumber } from "class-validator";
 
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Book{
 
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
     @ApiProperty()
-    id:string;
+    id:number;
 
     @IsNotEmpty()
     @IsString()

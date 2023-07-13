@@ -22,7 +22,7 @@ export class BookService {
     return 'book is updated';
   }
 
-  deleteBook(bookId: string) {
+  deleteBook(bookId: number) {
     this.books = this.books.filter((cbook) => {
       return bookId != cbook.id;
     });

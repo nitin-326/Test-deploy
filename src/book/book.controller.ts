@@ -32,7 +32,7 @@ export class BookController {
     @Delete('/:id')
     @UseGuards(AuthGuard('jwt'))
     @ApiBearerAuth()
-    Book(@Param('id') id : string){
+    Book(@Param('id') id : number){
         return this.bookService.deleteBook(id);
     }
 
