@@ -4,11 +4,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Book{
 
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty()
-    id:number;
-
     @IsNotEmpty()
     @IsString()
     @ApiProperty()
@@ -23,6 +18,5 @@ export class Book{
     @MaxLength(300)
     @ApiProperty()
     description:string;
-
 }
 

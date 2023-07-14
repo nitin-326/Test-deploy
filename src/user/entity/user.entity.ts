@@ -1,8 +1,9 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BookEntity } from 'src/book/book.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-@Entity()
+@Entity('Users')
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -20,4 +21,7 @@ export class UserEntity {
   boforeInsert() {
     this.id = uuidv4;
   }
+
+  @OneToMany(() => BookEntity, book => book.user)
+  book : BookEntity[]
 }

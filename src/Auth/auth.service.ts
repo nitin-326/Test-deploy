@@ -9,4 +9,13 @@ export class AuthService {
         return this.jwtService.sign(payload);
     }
     
+    async validate(token: string) {
+        try {
+            await this.jwtService.verifyAsync(token);
+            return true;
+          } catch (error) {
+            throw new Error('Invalid or expired token');
+          }
+    }
+    
 }
