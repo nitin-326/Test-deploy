@@ -1,40 +1,55 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Patch,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './book.dto';
+import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-
 @ApiTags('Books')
 @Controller('book')
+@UseGuards(AuthGuard('jwt'))
 export class BookController {
+  constructor(private bookService: BookService) {}
 
-    constructor(private bookService:BookService){}
+  @Get('/')
+  @ApiBearerAuth()
+  async findAllBook(@Req() req: Request) {
+    const userId = req.body.userId;
+    return await this.bookService.findAllBook(userId);
+  }
 
-    @Get('/:id')
-    async findAllBook(@Param('id') userid:string){
-        return await this.bookService.findAllBook(userid);
-    }
+  @Post('/:id')
+  @ApiBearerAuth()
+  addBook(@Body() book: Book, @Req() req: Request) {
+    const userId = req.body.userId;
+    return this.bookService.addBook(book, userId);
+  }
 
-    @Post('/:id')
-    @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth()
-    addBook(@Body() book : Book,@Param('id') userId : string){
-        return this.bookService.addBook(book,userId);
-    }
+  @Patch('/:id')
+  @ApiBearerAuth()
+  updateBook(
+    @Body() book: Book,
+    @Param('id') bookId: string,
+    @Req() req: Request,
+  ) {
+    const userId = req.body.userId;
+    return this.bookService.updateBook(book, bookId, userId);
+  }
 
-    @Put('/:id')
-    @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth()
-    updateBook(@Body() book : Book, @Param('id') id: string){
-        return this.bookService.updateBook(book,id);
-    }
-
-    @Delete('/:id')
-    @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth()
-    Book(@Param('id') id : string){
-        return this.bookService.deleteBook(id);
-    }
-
+  @Delete('/:id')
+  @ApiBearerAuth()
+  Book(@Param('id') id: string) {
+    return this.bookService.deleteBook(id);
+  }
 }

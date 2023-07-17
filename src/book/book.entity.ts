@@ -1,6 +1,6 @@
 import { IsString } from "class-validator";
 import { UserEntity } from "src/user/entity/user.entity";
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity,ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('Books')

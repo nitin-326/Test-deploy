@@ -1,6 +1,5 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
-
 const Config : TypeOrmModuleOptions = {
     type: 'postgres',
     host: 'localhost',

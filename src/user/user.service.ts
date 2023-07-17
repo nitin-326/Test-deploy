@@ -38,7 +38,7 @@ export class UserService {
     const isMatch = bcrypt.compare(userDto.password,user.password);
 
     if (isMatch) {
-      const token = this.authService.generateToken(userDto);
+      const token = await this.authService.generateToken({username:user.username ,id:user.id});
       return token;
     }
 
