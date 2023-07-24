@@ -23,25 +23,36 @@ export class UserService {
     myDto.username = username;
     myDto.password = hashpassword;
 
-    return this.userRepository.save(myDto);
+    try {
+      const response = this.userRepository.save(myDto);
+      return { status: 200, message: 'User Registered Successfully' };
+    } catch (err) {
+      return { message: err };
+    }
   }
 
   async login(userDto: UserDto) {
-    const user = await this.userRepository.findOneBy({
-      username: userDto.username,
-    });
+    try {
+      const user = await this.userRepository.findOneBy({
+        username: userDto.username,
+      });
 
-    if (!user) {
-      throw new UnauthorizedException("user is not registered");
+      if (!user) {
+        return { status: 404, message: 'Invalid Username details' };
+      }
+
+      const isMatch = await bcrypt.compare(userDto.password, user.password);
+
+      if (isMatch) {
+        const token = await this.authService.generateToken({
+          username: user.username,
+          id: user.id,
+        });
+        return { token: token, status:200, message: 'User Logged in successfully' };
+      }
+      return { status: 404, message: 'Invalid Password' };
+    } catch (err) {
+      return { status: 404, message: 'Invalid Login details' };
     }
-
-    const isMatch = bcrypt.compare(userDto.password,user.password);
-
-    if (isMatch) {
-      const token = await this.authService.generateToken({username:user.username ,id:user.id});
-      return token;
-    }
-
-    throw new UnauthorizedException("Incorrect Login Details");
   }
 }

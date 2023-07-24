@@ -25,7 +25,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // app.use(BookMiddleware)
-
-  await app.listen(3000);
+  app.enableCors();
+  await app.listen(5000);
 }
 bootstrap();

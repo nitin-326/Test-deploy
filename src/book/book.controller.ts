@@ -15,6 +15,7 @@ import { Book } from './book.dto';
 import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdateBookDto } from './updatebook.dto';
 
 @ApiTags('Books')
 @Controller('book')
@@ -29,7 +30,7 @@ export class BookController {
     return await this.bookService.findAllBook(userId);
   }
 
-  @Post('/:id')
+  @Post('/')
   @ApiBearerAuth()
   addBook(@Body() book: Book, @Req() req: Request) {
     const userId = req.body.userId;
@@ -39,17 +40,18 @@ export class BookController {
   @Patch('/:id')
   @ApiBearerAuth()
   updateBook(
-    @Body() book: Book,
+    @Body() book: UpdateBookDto,
     @Param('id') bookId: string,
     @Req() req: Request,
   ) {
-    const userId = req.body.userId;
+    const userId = req.body.userId;  
     return this.bookService.updateBook(book, bookId, userId);
   }
 
   @Delete('/:id')
   @ApiBearerAuth()
-  Book(@Param('id') id: string) {
-    return this.bookService.deleteBook(id);
+  Book(@Param('id') id: string,@Req() req: Request) {
+    const userId = req.body.userId; 
+    return this.bookService.deleteBook(id,userId);
   }
 }

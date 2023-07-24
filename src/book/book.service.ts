@@ -24,38 +24,53 @@ export class BookService {
     myBook.author = author;
     myBook.description = description;
     myBook.user = user;
-    console.log(myBook);
 
-    return this.bookRepository.save(myBook);
+    try {
+      this.bookRepository.save(myBook);
+      return { message: 'Book added successfully' };
+    } catch (err) {
+      return { message: err };
+    }
   }
 
   async findAllBook(userId: string) {
     const data = await this.bookRepository.find({
       where: { user: { id: userId } },
     });
-    return data;
+
+    if (data) {
+      return data;
+    }
+    throw new NotFoundException('No Book found');
   }
 
   async updateBook(book: Book, bookId: string, userId: string) {
-    let myBook = await this.bookRepository.findOneBy({ id: bookId });
+    const myBook = await this.bookRepository.find({
+      where: { user: { id: userId } },
+    });
 
-    if (!myBook) {
-      throw new Error('Book is not Available');
+    const foundBook = myBook.find((book) => book.id === bookId);
+
+    if (foundBook) {
+      foundBook.name = book.name;
+      foundBook.description = book.description;
+      foundBook.author = book.author;
+      const data = await this.bookRepository.save(foundBook);
+      return data;
     }
-    myBook.name = book.name;
-    myBook.author = book.author;
-    myBook.description = book.description;
-
-    const data = await this.bookRepository.save(myBook);
-    return data;
+    throw new NotFoundException('Invalid Book Detail');
   }
 
-  async deleteBook(bookId: string) {
-    const book = await this.bookRepository.findOneBy({ id: bookId });
+  async deleteBook(bookId: string, userId: string) {
+    const myBook = await this.bookRepository.find({
+      where: { user: { id: userId } },
+    });
 
-    if (!book) {
-      throw new NotFoundException('Book not found');
+    const foundBook = myBook.find((book) => book.id === bookId);
+
+    if (foundBook) {
+      return await this.bookRepository.delete(bookId);
     }
-    return await this.bookRepository.delete(bookId);
+    throw new NotFoundException('Invalid Book Detail');
   }
 }

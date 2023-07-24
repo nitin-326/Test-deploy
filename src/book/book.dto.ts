@@ -10,11 +10,11 @@ export class Book{
     name:string;
 
     @IsString()
+    @IsNotEmpty()
     @ApiProperty()
     author:string;
 
     @IsString()
-    @MinLength(10)
     @MaxLength(300)
     @ApiProperty()
     description:string;

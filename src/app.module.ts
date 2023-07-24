@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { BookModule } from './book/book.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import Config from '../config'
+import {Config} from '../config'
 import { AuthModule } from './Auth/auth.module';
 
 
