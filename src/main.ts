@@ -3,13 +3,11 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express/interfaces';
-import *as path from 'path';
-import { BookMiddleware } from './book/middleware/book.middleware';
+import { hostname } from 'os';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.useStaticAssets(path.join(__dirname, '../uploads'));
 
   const config = new DocumentBuilder()
     .setTitle('Swagger')
@@ -24,8 +22,8 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document);
 
-  // app.use(BookMiddleware)
   app.enableCors();
-  await app.listen(5000);
+  await app.listen(process.env.PORT, '0.0.0.0');
 }
+
 bootstrap();
