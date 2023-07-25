@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Req, UseGuards } from '@nestjs/common';
+import { Injectable, NotFoundException, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Book } from './book.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookEntity } from './book.entity';
@@ -58,7 +58,7 @@ export class BookService {
       const data = await this.bookRepository.save(foundBook);
       return data;
     }
-    throw new NotFoundException('Invalid Book Detail');
+    throw new NotFoundException('Unauthorized User');
   }
 
   async deleteBook(bookId: string, userId: string) {
@@ -71,6 +71,6 @@ export class BookService {
     if (foundBook) {
       return await this.bookRepository.delete(bookId);
     }
-    throw new NotFoundException('Invalid Book Detail');
+    throw new NotFoundException('Unauthorized User');
   }
 }
